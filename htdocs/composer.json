@@ -1,0 +1,21 @@
+{
+    "name": "root/htdocs",
+    "authors": [
+        {
+            "name": "Tales",
+            "email": "tales.duque@webjump.com.br"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\":"app/"
+        }
+    },
+
+    "require": {
+        "pecee/simple-router": "4.3.6.1",
+        "php-di/php-di": "^6.3",
+        "monolog/monolog": "^2.2",
+        "jenssegers/blade": "^1.4"
+    }   
+}
