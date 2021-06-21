@@ -23,6 +23,10 @@ class ComposerStaticInit18e12b9080f182fe040a1f335cf18c41
         array (
             'voku\\' => 5,
         ),
+        'W' => 
+        array (
+            'WilliamCosta\\DotEnv\\' => 20,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -82,6 +86,10 @@ class ComposerStaticInit18e12b9080f182fe040a1f335cf18c41
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'WilliamCosta\\DotEnv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/william-costa/dot-env/src',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
@@ -187,7 +195,7 @@ class ComposerStaticInit18e12b9080f182fe040a1f335cf18c41
         ),
         'App\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app',
+            0 => '/',
         ),
     );
 
