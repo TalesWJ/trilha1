@@ -33,5 +33,5 @@ return array(
     'Doctrine\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib/Doctrine/Inflector'),
     'DI\\' => array($vendorDir . '/php-di/php-di/src'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
-    'App\\' => array('/'),
+    'App\\' => array($baseDir . '/app'),
 );
