@@ -1,6 +1,6 @@
 <?php   
 
-namespace App;
+namespace App\Database;
 
 use \PDO;
 
@@ -36,6 +36,20 @@ class Database extends PDO
     }
 
     /**
+     * Binds the keys for insertion
+     *
+     * @param array $keys
+     * @return array
+     */ 
+    public function bindKeys($keys) : array
+    {
+        foreach ($keys as $key) {
+            $bindedKeys[$key] = ':' . strtoupper($key);
+        }
+        return $bindedKeys;
+    }
+
+    /**
      * Class constructor
      *
      * @param string $table
@@ -63,27 +77,43 @@ class Database extends PDO
     {
         // Getting array keys
         $fields = array_keys($values);
-        // Creating an ? array
-        $binds = array_pad([], count($fields),  '?' );
+        $bindedFields = $this->bindKeys($fields);
         // Building the query
-        $query = 'INSERT INTO ' . $this->table . '(' . implode(',', $fields) . ') VALUES (' . implode(',', $binds) . ')';
+        $query = 'INSERT INTO ' . $this->table . '(' . implode(',', $fields) . ') VALUES (' . implode(',', $bindedFields) . ')';
+        // Prepares the query
+        $stmt = $this->prepareBinds($query, $bindedFields, $values);
         // Executes the query and returns the last inserted ID
-        $this->execute($query, array_values($values));
+        $this->executeStatement($stmt);
         return $this->lastInsertId();
+    }
+
+    /**
+     * Replaces the values in the query with the values supplied
+     *
+     * @param string $query
+     * @param array $bindedFields
+     * @param array $values
+     * @return PDOStatement
+     */
+    private function prepareBinds($query, $bindedFields, $values)
+    {
+        $stmt = $this->prepare($query);
+        foreach ($bindedFields as $field => $value) {
+            $stmt->bindParam($value, $values[$field]);
+        }
+        return $stmt;
     }
 
     /**
      * Executes the query with the parameters passed
      *
-     * @param string $query
-     * @param string $values
+     * @param PDOStatement $stmt
      * @return PDOStatement
      */
-    public function execute($query, $values = [])
+    public function executeStatement($stmt)
     {
         try {
-            $stmt = $this->prepare($query);
-            $stmt->execute($values);
+            $stmt->execute();
             return $stmt;
         } catch (\PDOException $e) {
             die('ERROR: ' . $e->getMessage());
@@ -107,7 +137,8 @@ class Database extends PDO
         $limit = strlen($limit) ? 'LIMIT ' . $limit : '';
         // Building and executing the query
         $query = 'SELECT ' . $fields . ' FROM ' . $this->table . ' ' . $where . ' ' . $order . ' ' . $limit;
-        return $this->execute($query);
+        $stmt = $this->prepare($query);
+        return $this->executeStatement($stmt);
     }
 
     /**
@@ -121,10 +152,15 @@ class Database extends PDO
     {
         // Getting array keys
         $fields = array_keys($values);
+        $bindedFields = $this->bindKeys($fields);
         // Building the query
-        $query = 'UPDATE ' . $this->table . ' SET ' . implode('=?,', $fields) . '=? WHERE ' . $where;
+        foreach ($bindedFields as $key => $value) {
+            $updt[$key] = $key . '=' . $value;
+        }
+        $query = 'UPDATE ' . $this->table . ' SET ' . implode(',' , $updt) . ' WHERE ' . $where;
         // Executes the query and returns success if query was executed
-        $this->execute($query, array_values($values));
+        $stmt = $this->prepareBinds($query, $bindedFields, $values);
+        $this->executeStatement($stmt);
         return true;
     }
 
@@ -138,8 +174,9 @@ class Database extends PDO
     {
         // Building the query
         $query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
+        $stmt = $this->prepare($query);
         // Executes the query and returns success if query was executed
-        $this->execute($query);
+        $this->executeStatement($stmt);
         return true;
     }
 
@@ -151,7 +188,7 @@ class Database extends PDO
     public function rows()
     {
         $query = 'SELECT COUNT (*) FROM ' . $this->table . ';';
-        return $this->execute($query);
+        $stmt = $this->prepare($query);
+        return $this->executeStatement($stmt);
     }
-
 }
