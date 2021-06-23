@@ -41,7 +41,7 @@ class Database extends PDO
      * @param array $keys
      * @return array
      */ 
-    public function bindKeys($keys) : array
+    private function bindKeys($keys) : array
     {
         foreach ($keys as $key) {
             $bindedKeys[$key] = ':' . strtoupper($key);
@@ -190,5 +190,26 @@ class Database extends PDO
         $query = 'SELECT COUNT (*) FROM ' . $this->table . ';';
         $stmt = $this->prepare($query);
         return $this->executeStatement($stmt);
+    }
+
+    /**
+     * Sets the table attribute
+     *
+     * @param string $table
+     * @return void
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * Gets the table attribute
+     *
+     * @return string
+     */
+    public function getTable() : string
+    {
+        return $this->table;
     }
 }
