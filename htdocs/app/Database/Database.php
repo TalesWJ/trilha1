@@ -73,15 +73,16 @@ class Database extends PDO
      * @param array $values
      * @return integer
      */
-    public function insert($values) : int
+    public function insert($values, $columns) : int
     {
-        // Getting array keys
-        $fields = array_keys($values);
-        $bindedFields = $this->bindKeys($fields);
+        // Arranging arrays
+        array_shift($columns);
+        $combinedValues = array_combine($columns, $values);
+        $bindedFields = $this->bindKeys(array_values($columns));
         // Building the query
-        $query = 'INSERT INTO ' . $this->table . '(' . implode(',', $fields) . ') VALUES (' . implode(',', $bindedFields) . ')';
+        $query = 'INSERT INTO ' . $this->table . '(' . implode(',', $columns) . ') VALUES (' . implode(',', $bindedFields) . ')';
         // Prepares the query
-        $stmt = $this->prepareBinds($query, $bindedFields, $values);
+        $stmt = $this->prepareBinds($query, $bindedFields, $combinedValues);
         // Executes the query and returns the last inserted ID
         $this->executeStatement($stmt);
         return $this->lastInsertId();
@@ -148,18 +149,20 @@ class Database extends PDO
      * @param array $values [column name => value]
      * @return bool
      */
-    public function update($where, $values) : bool
+    public function update($where, $values, $columns) : bool
     {
         // Getting array keys
-        $fields = array_keys($values);
-        $bindedFields = $this->bindKeys($fields);
+        array_shift($columns);
+        $combinedValues = array_combine($columns, $values);
+        $bindedFields = $this->bindKeys($columns);
         // Building the query
         foreach ($bindedFields as $key => $value) {
             $updt[$key] = $key . '=' . $value;
         }
+        
         $query = 'UPDATE ' . $this->table . ' SET ' . implode(',' , $updt) . ' WHERE ' . $where;
         // Executes the query and returns success if query was executed
-        $stmt = $this->prepareBinds($query, $bindedFields, $values);
+        $stmt = $this->prepareBinds($query, $bindedFields, $combinedValues);
         $this->executeStatement($stmt);
         return true;
     }
