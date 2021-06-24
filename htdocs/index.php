@@ -1,8 +1,8 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-use \App\Database\Database;
-use \App\Models\CoreModel;
+use App\Database\Database;
+use App\Models\CoreModel;
 
 WilliamCosta\DotEnv\Environment::load(__DIR__);
 Database::config(getenv('DB_HOST'), getenv('DB_NAME'), getenv('DB_USER'), getenv('DB_PASS'));

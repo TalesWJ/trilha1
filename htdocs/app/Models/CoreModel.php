@@ -31,7 +31,7 @@ class CoreModel implements CoreModelInterface
      * @param integer $id
      * @return mixed
      */
-    public function selectDataById(int $id) : mixed
+    public function selectDataById(int $id) : array
     {
         $where = $this->columns[0] . '=' . $id;
         return $this->connection->select($where)->fetchAll(Database::FETCH_OBJ);
@@ -42,7 +42,7 @@ class CoreModel implements CoreModelInterface
      *
      * @return array
      */
-    public function selectAllData() : mixed
+    public function selectAllData() : array
     {
         return $this->connection->select()->fetchAll(Database::FETCH_OBJ);
     }

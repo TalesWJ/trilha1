@@ -2,21 +2,21 @@
 
 namespace App\Database;
 
-use \PDO;
-use \PDOException;
-use \PDOStatement;
+use PDO;
+use PDOException;
+use PDOStatement;
 
 /**
  * Database Class with usual functions like select, insert, delete...
  */
 class Database extends PDO
 {
-    private static $host;
-    private static $name;
-    private static $user;
-    private static $pass;
-    private static $port;
-    private $table;
+    private static string $host;
+    private static string $name;
+    private static string $user;
+    private static string $pass;
+    private static int $port;
+    private string $table;
 
     /**
      * Config Function
@@ -28,7 +28,7 @@ class Database extends PDO
      * @param integer $port
      * @return void
      */
-    public static function config($host, $name, $user, $pass, $port = 3306)
+    public static function config(string $host, string $name, string $user, string $pass, int $port = 3306) : void
     {
         self::$host = $host;
         self::$name = $name;
@@ -43,8 +43,9 @@ class Database extends PDO
      * @param array $keys
      * @return array
      */ 
-    private function bindKeys($keys) : array
+    private function bindKeys(array $keys) : array
     {
+        $bindedKeys = [];
         foreach ($keys as $key) {
             $bindedKeys[$key] = ':' . strtoupper($key);
         }
@@ -56,7 +57,7 @@ class Database extends PDO
      *
      * @param string $table
      */
-    public function __construct($table = null)
+    public function __construct(string $table = '')
     {
         $this->table = $table;
         $dsn = 'mysql:host=' . self::$host . ';dbname=' . self::$name . ';port=' . self::$port;
@@ -119,7 +120,7 @@ class Database extends PDO
         try {
             $stmt->execute();
             return $stmt;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             die('ERROR: ' . $e->getMessage());
         }
     }
@@ -159,6 +160,7 @@ class Database extends PDO
         array_shift($columns);
         $combinedValues = array_combine($columns, $values);
         $bindedFields = $this->bindKeys($columns);
+        $updt = [];
         // Building the query
         foreach ($bindedFields as $key => $value) {
             $updt[$key] = $key . '=' . $value;
@@ -177,7 +179,7 @@ class Database extends PDO
      * @param string $where
      * @return bool
      */
-    public function delete($where)
+    public function delete(string $where) : bool
     {
         // Building the query
         $query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
