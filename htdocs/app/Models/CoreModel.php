@@ -4,15 +4,13 @@ namespace App\Models;
 
 use App\Models\Interfaces\CoreModelInterface;
 use App\Database\Database;
-use Magento\Theme\Model\Design\Config\Plugin\Dump;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class CoreModel implements CoreModelInterface
 {
 
-    private $connection;
-    private $table;
-    private $columns;
+    private Database $connection;
+    private string $table;
+    private array $columns;
 
     /**
      * Class Construct
@@ -31,14 +29,12 @@ class CoreModel implements CoreModelInterface
      * Retrieves data from DB based on the ID
      *
      * @param integer $id
-     * @return array
+     * @return mixed
      */
-    public function selectDataById(int $id)
+    public function selectDataById(int $id) : mixed
     {
         $where = $this->columns[0] . '=' . $id;
-        $data = $this->connection->select($where);
-        $obj = $data->fetchAll(Database::FETCH_OBJ);
-        return $obj;
+        return $this->connection->select($where)->fetchAll(Database::FETCH_OBJ);
     }
 
     /**
@@ -46,10 +42,9 @@ class CoreModel implements CoreModelInterface
      *
      * @return array
      */
-    public function selectAllData()
+    public function selectAllData() : mixed
     {
-        $data = $this->connection->select();
-        return $data->fetchAll(Database::FETCH_OBJ);
+        return $this->connection->select()->fetchAll(Database::FETCH_OBJ);
     }
 
     /**
@@ -60,8 +55,7 @@ class CoreModel implements CoreModelInterface
      */
     public function insertData(array $data) : int
     {
-        $id = $this->connection->insert($data, $this->columns);
-        return $id; 
+        return $this->connection->insert($data, $this->columns);
     }
 
     /**
@@ -74,8 +68,7 @@ class CoreModel implements CoreModelInterface
     public function updateData(array $data, int $id) : bool
     {
         $where = $this->columns[0] . '=' . $id;
-        $cond = $this->connection->update($where, $data, $this->columns);
-        return $cond;
+        return $this->connection->update($where, $data, $this->columns);
     }
 
     /**
@@ -88,8 +81,7 @@ class CoreModel implements CoreModelInterface
     public function deleteData(string $column, string $value) : bool
     {
         $where = $column . '=' . $value;
-        $cond = $this->connection->delete($where);
-        return $cond;
+        return $this->connection->delete($where);
     }
 
 }

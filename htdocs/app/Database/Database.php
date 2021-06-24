@@ -3,6 +3,8 @@
 namespace App\Database;
 
 use \PDO;
+use \PDOException;
+use \PDOStatement;
 
 /**
  * Database Class with usual functions like select, insert, delete...
@@ -61,7 +63,7 @@ class Database extends PDO
         try {
             parent::__construct($dsn, self::$user, self::$pass);
             $this->setAttribute(parent::ATTR_ERRMODE, parent::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             die('ERROR: ' .$e->getMessage());
         }
     }
@@ -71,9 +73,10 @@ class Database extends PDO
      * Must be inserted as [column name => value]
      * 
      * @param array $values
+     * @param array $columns
      * @return integer
      */
-    public function insert($values, $columns) : int
+    public function insert(array $values,array $columns) : int
     {
         // Arranging arrays
         array_shift($columns);
@@ -96,7 +99,7 @@ class Database extends PDO
      * @param array $values
      * @return PDOStatement
      */
-    private function prepareBinds($query, $bindedFields, $values)
+    private function prepareBinds(string $query,array $bindedFields,array $values) : PDOStatement
     {
         $stmt = $this->prepare($query);
         foreach ($bindedFields as $field => $value) {
@@ -111,7 +114,7 @@ class Database extends PDO
      * @param PDOStatement $stmt
      * @return PDOStatement
      */
-    public function executeStatement($stmt)
+    public function executeStatement(PDOStatement $stmt) : PDOStatement
     {
         try {
             $stmt->execute();
@@ -130,12 +133,12 @@ class Database extends PDO
      * @param string $fields
      * @return PDOStatement
      */
-    public function select($where = null, $order = null, $limit = null, $fields = '*')
+    public function select(string $where = '', string $order = '', string $limit = '', string $fields = '*') : PDOStatement
     {
         // Checking if these informations have been specified
-        $where = strlen($where) ? 'WHERE ' . $where : '';
-        $order = strlen($order) ? 'ORDER BY ' . $order : '';
-        $limit = strlen($limit) ? 'LIMIT ' . $limit : '';
+        $where = ($where!=='') ? 'WHERE ' . $where : '';
+        $order = ($order!=='') ? 'ORDER BY ' . $order : '';
+        $limit = ($limit!=='') ? 'LIMIT ' . $limit : '';
         // Building and executing the query
         $query = 'SELECT ' . $fields . ' FROM ' . $this->table . ' ' . $where . ' ' . $order . ' ' . $limit;
         $stmt = $this->prepare($query);
@@ -146,10 +149,11 @@ class Database extends PDO
      * Updates fields in the database
      *
      * @param string $where
-     * @param array $values [column name => value]
+     * @param array $values
+     * @param array $columns
      * @return bool
      */
-    public function update($where, $values, $columns) : bool
+    public function update(string $where, array $values, array $columns) : bool
     {
         // Getting array keys
         array_shift($columns);
@@ -188,7 +192,7 @@ class Database extends PDO
      *
      * @return PDOStatement
      */
-    public function rows()
+    public function rows() : PDOStatement
     {
         $query = 'SELECT COUNT (*) FROM ' . $this->table . ';';
         $stmt = $this->prepare($query);
@@ -199,9 +203,8 @@ class Database extends PDO
      * Sets the table attribute
      *
      * @param string $table
-     * @return void
      */
-    public function setTable($table)
+    public function setTable(string $table) : void
     {
         $this->table = $table;
     }
