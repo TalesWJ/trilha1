@@ -20,9 +20,8 @@ class CoreModel implements CoreModelInterface
      */
     public function __construct(string $table, array $columns)
     {
-        $this->table = $table;
         $this->columns = $columns;
-        $this->connection = new Database($this->table);
+        $this->connection = new Database($table);
     }
 
     /**

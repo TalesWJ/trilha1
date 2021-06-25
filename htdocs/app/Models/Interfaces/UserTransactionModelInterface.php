@@ -32,4 +32,8 @@ interface UserTransactionModelInterface
 
     public function getToAcc() : string;
 
+    public function setAccNumber(string $accNumber);
+
+    public function getAccNumber() : string;
+
 }

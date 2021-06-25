@@ -31,5 +31,8 @@ interface UserAddressModelInterface
     public function setComplement(string $complement);
 
     public function getComplement() : string;
-    
+
+    public function setAccNumber(string $accNumber);
+
+    public function getAccNumber() : string;
 }
