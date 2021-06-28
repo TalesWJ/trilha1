@@ -4,8 +4,9 @@ use Pecee\SimpleRouter\SimpleRouter as Router;
 use Pecee\Http\Url;
 use Pecee\Http\Response;
 use Pecee\Http\Request;
+use App\DependencyInjection\Builder;
 
-class RouterHelper
+class Helper
 {
     /**
      * Get url for a route by using either name/alias, class or method name.
@@ -25,7 +26,7 @@ class RouterHelper
      * @return Url
      * @throws InvalidArgumentException
      */
-    function url(?string $name = null, $parameters = null, ?array $getParams = null): Url
+    public static function url(?string $name = null, $parameters = null, ?array $getParams = null): Url
     {
         return Router::getUrl($name, $parameters, $getParams);
     }
@@ -33,7 +34,7 @@ class RouterHelper
     /**
      * @return Response
      */
-    function response(): Response
+    public static function response(): Response
     {
         return Router::response();
     }
@@ -41,7 +42,7 @@ class RouterHelper
     /**
      * @return Request
      */
-    function request(): Request
+    public static function request(): Request
     {
         return Router::request();
     }
@@ -53,7 +54,7 @@ class RouterHelper
      * @param array ...$methods Default methods
      * @return Pecee\Http\Input\InputHandler|array|string|null
      */
-    function input(?string $index = null, ?string $defaultValue = null, ...$methods)
+    public static function input(?string $index = null, ?string $defaultValue = null, ...$methods)
     {
         if ($index !== null) {
             return request()->getInputHandler()->value($index, $defaultValue, ...$methods);
@@ -66,7 +67,7 @@ class RouterHelper
      * @param string $url
      * @param int|null $code
      */
-    function redirect(string $url, ?int $code = null): void
+    public static function redirect(string $url, ?int $code = null): void
     {
         if ($code !== null) {
             response()->httpCode($code);
@@ -79,7 +80,7 @@ class RouterHelper
      * Get current csrf-token
      * @return string|null
      */
-    function csrf_token(): ?string
+    public static function csrf_token(): ?string
     {
         $baseVerifier = Router::router()->getCsrfVerifier();
         if ($baseVerifier !== null) {
@@ -87,5 +88,33 @@ class RouterHelper
         }
 
         return null;
+    }
+
+    /**
+     * Returns a new container depending on the dependency
+     * @param string $dependency
+     * @return mixed
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
+    public static function getContainer(string $dependency)
+    {
+        return Builder::buildContainer()->get($dependency);
+    }
+
+    public static function apiResponse(string $message, string $optParam = null, $optValue = null)
+    {
+        $data = [
+            'statusCode' => http_response_code(),
+            'message' => $message
+        ];
+        if(isset($optParam, $optValue)) {
+            $data = [
+                'statusCode' => http_response_code(),
+                'message' => $message,
+                $optParam => $optValue
+            ];
+        }
+        self::response()->json($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }

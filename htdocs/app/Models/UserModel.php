@@ -18,7 +18,7 @@ class UserModel extends CoreModel implements UserModelInterface
     private string $accNumber;
     private string $accPw;
 
-    public function __construct(string $table, array $columns)
+    public function __construct()
     {
         parent::__construct('users',
         [
