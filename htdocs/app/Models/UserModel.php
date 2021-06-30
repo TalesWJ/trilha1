@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\UserModelInterface;
-use App\Models\CoreModel;
+use App\Interfaces\UserModelInterface;
 
 class UserModel extends CoreModel implements UserModelInterface
 {
+    public const USER_NOT_FOUND = 'Usuário não encontrado.';
+    public const USER_FOUND = 'Usuário encontrado com sucesso.';
+    public const USER_ACCNUMBER_EXISTS = 'Número de conta informado já cadastrado.';
+    public const SEARCH_SUCCESS = 'Sucesso na Busca.';
+    public const USER_CPF_EXISTS = 'CPF informado já cadastrado.';
+    public const USER_RG_EXISTS = 'RG informado já cadastrado.';
+    public const UNIQUE_DATA = 'Dados inseridos OK.';
+    public const USER_CREATED = 'Usuário criado com sucesso.';
+
+
     private int $id;
     private string $name;
     private string $cpf;
@@ -20,19 +29,19 @@ class UserModel extends CoreModel implements UserModelInterface
 
     public function __construct()
     {
-        parent::__construct('users',
-        [
-            "id_users",
-            "name",
-            "cpf",
-            "rg",
-            "dob",
-            "phone",
-            "balance",
-            "token",
-            "acc_number",
-            "acc_pw"
-        ]);
+        self::setAttributes('users',
+            [
+                "id_users",
+                "name",
+                "cpf",
+                "rg",
+                "dob",
+                "phone",
+                "balance",
+                "token",
+                "acc_number",
+                "acc_pw"
+            ]);
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\UserTransactionModelInterface;
-use App\Models\CoreModel;
+use App\Interfaces\UserTransactionModelInterface;
 
 class UserTransactionsModel extends CoreModel implements UserTransactionModelInterface
 {

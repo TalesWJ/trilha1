@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\CoreModelInterface;
+use Exception;
+use App\Interfaces\CoreModelInterface;
 use App\Database\Database;
+use App\DependencyInjection\Builder;
 
-class CoreModel implements CoreModelInterface
+class CoreModel extends ModelManager implements CoreModelInterface
 {
 
-    private Database $connection;
-    private string $table;
-    private array $columns;
+    private static string $table;
+    private static array $columns;
 
     /**
      * Class Construct
@@ -18,22 +19,34 @@ class CoreModel implements CoreModelInterface
      * @param string $table
      * @param array $columns
      */
-    public function __construct(string $table, array $columns)
+    public static function setAttributes(string $table, array $columns) : void
     {
-        $this->columns = $columns;
-        $this->connection = new Database($table);
+        self::$table = $table;
+        self::$columns = $columns;
     }
 
     /**
-     * Retrieves data from DB based on the ID
+     * Retrieves data from DB based on the given Column and Value
      *
-     * @param integer $id
+     * @param string $column
+     * @param string $value
      * @return mixed
      */
-    public function selectDataByColumn(int $id) : array
+    public static function selectDataByColumn(string $column, string $value) : array
     {
-        $where = $this->columns[0] . '=' . $id;
-        return $this->connection->select($where)->fetchAll(Database::FETCH_OBJ);
+        Builder::buildContainer()->get('ModelManager');
+
+        try {
+            if (!in_array($column, self::$columns, TRUE)) {
+                throw new Exception("Coluna $column não encontrada");
+            }
+            self::$conn->setTable(self::$table);
+            $where = $column . '=' . $value;
+            return self::$conn->select($where)->fetchAll(Database::FETCH_OBJ);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+
     }
 
     /**
@@ -41,9 +54,11 @@ class CoreModel implements CoreModelInterface
      *
      * @return array
      */
-    public function selectAllData() : array
+    public static function selectAllData() : array
     {
-        return $this->connection->select()->fetchAll(Database::FETCH_OBJ);
+        Builder::buildContainer()->get('ModelManager');
+        self::$conn->setTable(self::$table);
+        return self::$conn->select()->fetchAll(Database::FETCH_OBJ);
     }
 
     /**
@@ -52,9 +67,10 @@ class CoreModel implements CoreModelInterface
      * @param array $data
      * @return integer
      */
-    public function insertData(array $data) : int
+    public static function insertData(array $data) : int
     {
-        return $this->connection->insert($data, $this->columns);
+        self::$conn->setTable(self::$table);
+        return self::$conn->insert($data, self::$columns);
     }
 
     /**
@@ -64,10 +80,11 @@ class CoreModel implements CoreModelInterface
      * @param integer $id
      * @return boolean
      */
-    public function updateData(array $data, int $id) : bool
+    public static function updateData(array $data, int $id) : bool
     {
-        $where = $this->columns[0] . '=' . $id;
-        return $this->connection->update($where, $data, $this->columns);
+        $where = self::$columns[0] . '=' . $id;
+        self::$conn->setTable(self::$table);
+        return self::$conn->update($where, $data, self::$columns);
     }
 
     /**
@@ -77,10 +94,11 @@ class CoreModel implements CoreModelInterface
      * @param string $value
      * @return boolean
      */
-    public function deleteData(string $column, string $value) : bool
+    public static function deleteData(string $column, string $value) : bool
     {
         $where = $column . '=' . $value;
-        return $this->connection->delete($where);
+        self::$conn->setTable(self::$table);
+        return self::$conn->delete($where);
     }
 
 }

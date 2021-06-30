@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\UserAddressModelInterface;
-use App\Models\CoreModel;
+use App\Interfaces\UserAddressModelInterface;
 
 class UserAddressModel extends CoreModel implements UserAddressModelInterface
 {
@@ -13,13 +12,14 @@ class UserAddressModel extends CoreModel implements UserAddressModelInterface
     private string $country;
     private string $state;
     private string $city;
+    private string $street;
     private string $number;
     private string $complement;
     private string $accNumber;
 
     public function __construct()
     {
-        parent::__construct('user_address',
+        self::setAttributes('user_address',
         [
             "id_address",
             "zipcode",
@@ -122,6 +122,25 @@ class UserAddressModel extends CoreModel implements UserAddressModelInterface
     public function getCity(): string
     {
         return $this->city;
+    }
+
+    /**
+     * Sets the street
+     * @param string $street
+     * @return string
+     */
+    public function setStreet(string $street) : void
+    {
+        $this->street = $street;
+    }
+
+    /**
+     * Gets the street
+     * @return string
+     */
+    public function getStreet(): string
+    {
+        return $this->street;
     }
 
     /**

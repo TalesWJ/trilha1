@@ -2,6 +2,7 @@
 
 namespace App\Database;
 
+use App\Interfaces\DatabaseInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -9,14 +10,15 @@ use PDOStatement;
 /**
  * Database Class with usual functions like select, insert, delete...
  */
-class Database extends PDO
+class Database extends PDO implements DatabaseInterface
 {
     private static string $host;
     private static string $name;
     private static string $user;
     private static string $pass;
     private static int $port;
-    private string $table;
+    private static $conn;
+    private static string $table;
 
     /**
      * Config Function
@@ -53,16 +55,23 @@ class Database extends PDO
     }
 
     /**
+     * GetDBConnection
+     * @return object
+     */
+    public static function getDBConnection() : object
+    {
+        return self::$conn;
+    }
+
+    /**
      * Class constructor
      *
-     * @param string $table
      */
-    public function __construct(string $table = '')
+    public function __construct()
     {
-        $this->table = $table;
         $dsn = 'mysql:host=' . self::$host . ';dbname=' . self::$name . ';port=' . self::$port;
         try {
-            parent::__construct($dsn, self::$user, self::$pass);
+            self::$conn = parent::__construct($dsn, self::$user, self::$pass);
             $this->setAttribute(parent::ATTR_ERRMODE, parent::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die('ERROR: ' .$e->getMessage());
@@ -84,7 +93,7 @@ class Database extends PDO
         $combinedValues = array_combine($columns, $values);
         $bindedFields = $this->bindKeys(array_values($columns));
         // Building the query
-        $query = 'INSERT INTO ' . $this->table . '(' . implode(',', $columns) . ') VALUES (' . implode(',', $bindedFields) . ')';
+        $query = 'INSERT INTO ' . self::$table . '(' . implode(',', $columns) . ') VALUES (' . implode(',', $bindedFields) . ')';
         // Prepares the query
         $stmt = $this->prepareBinds($query, $bindedFields, $combinedValues);
         // Executes the query and returns the last inserted ID
@@ -141,7 +150,7 @@ class Database extends PDO
         $order = ($order!=='') ? 'ORDER BY ' . $order : '';
         $limit = ($limit!=='') ? 'LIMIT ' . $limit : '';
         // Building and executing the query
-        $query = 'SELECT ' . $fields . ' FROM ' . $this->table . ' ' . $where . ' ' . $order . ' ' . $limit;
+        $query = 'SELECT ' . $fields . ' FROM ' . self::$table . ' ' . $where . ' ' . $order . ' ' . $limit;
         $stmt = $this->prepare($query);
         return $this->executeStatement($stmt);
     }
@@ -166,7 +175,7 @@ class Database extends PDO
             $updt[$key] = $key . '=' . $value;
         }
         
-        $query = 'UPDATE ' . $this->table . ' SET ' . implode(',' , $updt) . ' WHERE ' . $where;
+        $query = 'UPDATE ' . self::$table . ' SET ' . implode(',' , $updt) . ' WHERE ' . $where;
         // Executes the query and returns success if query was executed
         $stmt = $this->prepareBinds($query, $bindedFields, $combinedValues);
         $this->executeStatement($stmt);
@@ -182,7 +191,7 @@ class Database extends PDO
     public function delete(string $where) : bool
     {
         // Building the query
-        $query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
+        $query = 'DELETE FROM ' . self::$table . ' WHERE ' . $where;
         $stmt = $this->prepare($query);
         // Executes the query and returns success if query was executed
         $this->executeStatement($stmt);
@@ -196,7 +205,7 @@ class Database extends PDO
      */
     public function rows() : PDOStatement
     {
-        $query = 'SELECT COUNT (*) FROM ' . $this->table . ';';
+        $query = 'SELECT COUNT (*) FROM ' . self::$table . ';';
         $stmt = $this->prepare($query);
         return $this->executeStatement($stmt);
     }
@@ -208,7 +217,7 @@ class Database extends PDO
      */
     public function setTable(string $table) : void
     {
-        $this->table = $table;
+        self::$table = $table;
     }
 
     /**
@@ -218,6 +227,6 @@ class Database extends PDO
      */
     public function getTable() : string
     {
-        return $this->table;
+        return self::$table;
     }
 }
