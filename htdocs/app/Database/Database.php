@@ -122,13 +122,12 @@ class Database extends PDO implements DatabaseInterface
      * Executes the query with the parameters passed
      *
      * @param PDOStatement $stmt
-     * @return PDOStatement
+     * @return bool
      */
-    public function executeStatement(PDOStatement $stmt) : PDOStatement
+    public function executeStatement(PDOStatement $stmt) : bool
     {
         try {
-            $stmt->execute();
-            return $stmt;
+            return $stmt->execute();
         } catch (PDOException $e) {
             die('ERROR: ' . $e->getMessage());
         }
@@ -141,9 +140,9 @@ class Database extends PDO implements DatabaseInterface
      * @param string $order
      * @param string $limit
      * @param string $fields
-     * @return PDOStatement
+     * @return bool
      */
-    public function select(string $where = '', string $order = '', string $limit = '', string $fields = '*') : PDOStatement
+    public function select(string $where = '', string $order = '', string $limit = '', string $fields = '*') : bool
     {
         // Checking if these informations have been specified
         $where = ($where!=='') ? 'WHERE ' . $where : '';
@@ -167,19 +166,26 @@ class Database extends PDO implements DatabaseInterface
     {
         // Getting array keys
         array_shift($columns);
-        $combinedValues = array_combine($columns, $values);
         $bindedFields = $this->bindKeys($columns);
         $updt = [];
         // Building the query
         foreach ($bindedFields as $key => $value) {
-            $updt[$key] = $key . '=' . $value;
+            foreach ($values as $keyInput => $valueInput) {
+                if ($keyInput === $key) {
+                    $updt[$key] = $key . '=' . $value;
+                } else {
+                    unset($bindedFields[$key]);
+                    $colKey = array_search($key, $columns);
+                    unset($columns[$colKey]);
+                }
+            }
         }
-        
+        $combinedValues = array_combine($columns, $values);
         $query = 'UPDATE ' . self::$table . ' SET ' . implode(',' , $updt) . ' WHERE ' . $where;
         // Executes the query and returns success if query was executed
         $stmt = $this->prepareBinds($query, $bindedFields, $combinedValues);
         $this->executeStatement($stmt);
-        return true;
+        return !($stmt->rowCount() === 0);
     }
 
     /**
@@ -203,7 +209,7 @@ class Database extends PDO implements DatabaseInterface
      *
      * @return PDOStatement
      */
-    public function rows() : PDOStatement
+    public function rows() : bool
     {
         $query = 'SELECT COUNT (*) FROM ' . self::$table . ';';
         $stmt = $this->prepare($query);

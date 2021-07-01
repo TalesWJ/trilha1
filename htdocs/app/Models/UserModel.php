@@ -14,6 +14,8 @@ class UserModel extends CoreModel implements UserModelInterface
     public const USER_RG_EXISTS = 'RG informado já cadastrado.';
     public const UNIQUE_DATA = 'Dados inseridos OK.';
     public const USER_CREATED = 'Usuário criado com sucesso.';
+    public const USER_WRONG_PW = 'Senha incorreta.';
+    public const USER_PW_AUTH_OK = 'Senha autenticada com sucesso';
 
 
     private int $id;
@@ -222,5 +224,23 @@ class UserModel extends CoreModel implements UserModelInterface
     public function getAccPw(): string
     {
         return $this->accPw;
+    }
+
+    /**
+     * Authenticates user password
+     *
+     * @param string $inputPW
+     * @param string $regPW
+     * @return string
+     */
+    public function pwAuth(string $inputPW, string $regPW) : string
+    {
+        $pwAuth = password_verify($inputPW, $regPW);
+
+        if (!$pwAuth) {
+            return self::USER_WRONG_PW;
+        }
+
+        return self::USER_PW_AUTH_OK;
     }
 }

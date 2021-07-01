@@ -41,7 +41,7 @@ class CoreModel extends ModelManager implements CoreModelInterface
                 throw new Exception("Coluna $column não encontrada");
             }
             self::$conn->setTable(self::$table);
-            $where = $column . '=' . $value;
+            $where = $column . '="' . $value . '"';
             return self::$conn->select($where)->fetchAll(Database::FETCH_OBJ);
         } catch (Exception $e) {
             echo $e->getMessage();
@@ -77,14 +77,24 @@ class CoreModel extends ModelManager implements CoreModelInterface
      * Updates data in the DB based on ID
      *
      * @param array $data
-     * @param integer $id
+     * @param string $column
+     * @param string $value
      * @return boolean
      */
-    public static function updateData(array $data, int $id) : bool
+    public static function updateData(array $data, string $column, string $value) : bool
     {
-        $where = self::$columns[0] . '=' . $id;
-        self::$conn->setTable(self::$table);
-        return self::$conn->update($where, $data, self::$columns);
+        Builder::buildContainer()->get('ModelManager');
+
+        try {
+            if (!in_array($column, self::$columns, TRUE)) {
+                throw new Exception("Coluna $column não encontrada");
+            }
+            $where = $column . '="' . $value . '"';
+            self::$conn->setTable(self::$table);
+            return self::$conn->update($where, $data, self::$columns);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
     }
 
     /**

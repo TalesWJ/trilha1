@@ -10,6 +10,8 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use \Helper;
+use PHPUnit\TextUI\Help;
+
 
 class UserApiController
 {
@@ -65,7 +67,7 @@ class UserApiController
     {
         $user = $this->user::selectDataByColumn('acc_number', $accNumber);
 
-        if($user === false) {
+        if ($user === false) {
             http_response_code(404);
             $message = $this->user::USER_NOT_FOUND . ' (Conta: ' . $accNumber . ')';
         } else {
@@ -92,7 +94,7 @@ class UserApiController
     {
         $message = '';
         foreach ($data as $column => $value) {
-            if(strlen($value) > 255) {
+            if (strlen($value) > 255) {
                 http_response_code(400);
                 $message = self::CHAR_LIM . $column . '.';
             }
@@ -112,12 +114,12 @@ class UserApiController
             // Checking length of inserted data, max: 255 characters
             $message = $this->checkLength($request_content->user);
 
-            if(!empty($message)) {
+            if (!empty($message)) {
                 throw new Exception($message);
             }
 
             $message = $this->checkLength($request_content->address);
-            if(!empty($message)) {
+            if (!empty($message)) {
                 throw new Exception($message);
             }
 
@@ -128,7 +130,7 @@ class UserApiController
                 $request_content->user->rg
             ];
 
-            if(!empty($allUsers)) {
+            if (!empty($allUsers)) {
                 foreach ($uniqueAttributes as $uniqueAttribute) {
                     $isValid = $this->validateUniqueData($uniqueAttribute, $allUsers);
 
@@ -229,5 +231,101 @@ class UserApiController
         }
 
         return $message;
+    }
+
+    /**
+     * Authenticates user login attempt
+     * @throws Exception
+     */
+    public function login()
+    {
+        $request_content = json_decode(file_get_contents('php://input'));
+
+        $loginData = [
+            'acc_number' => $request_content->acc_number,
+            'acc_pw' => $request_content->password
+        ];
+
+        $user = $this->user::selectDataByColumn('acc_number', $loginData['acc_number']);
+        if (!empty($user[0])) {
+            $pwAuth = $this->user->pwAuth($loginData['acc_pw'], $user[0]->acc_pw);
+            switch ($pwAuth) {
+                case $this->user::USER_WRONG_PW:
+                    http_response_code(401);
+                    $message = $pwAuth;
+                    break;
+                case $this->user::USER_PW_AUTH_OK:
+                    $message = $pwAuth;
+                    $this->user->setToken(base64_encode(random_bytes(16)));
+                    break;
+            }
+        } else {
+            http_response_code(404);
+            $message = $this->user::USER_NOT_FOUND;
+        }
+
+        $data = [
+            'token' => $this->user->getToken()
+        ];
+
+        if (isset($data['token'])) {
+            $this->user::updateData($data, 'acc_number', $loginData['acc_number']);
+            Helper::apiResponse(
+                $message,
+                'token',
+                $data['token']
+            );
+        } else {
+            Helper::apiResponse(
+                $message
+            );
+        }
+    }
+
+    /**
+     * Gets account balance from
+     */
+    public function getBalance()
+    {
+        $request_content = json_decode(file_get_contents('php://input'));
+        $user = $this->user::selectDataByColumn('acc_number', $request_content->acc_number);
+
+        if (isset($user[0])) {
+            $balance = $user[0]->balance;
+            $message = 'Balanço obtido com sucesso';
+            Helper::apiResponse(
+                $message,
+                'balance',
+                $balance
+            );
+        } else {
+            http_response_code(404);
+            $message = 'Usuário não encontrado';
+            Helper::apiResponse(
+                $message
+            );
+        }
+    }
+
+    /**
+     * Updates the account's balance
+     */
+    public function updateBalance()
+    {
+        $request_content = json_decode(file_get_contents('php://input'));
+        $this->user->setBalance($request_content->balance);
+        $newBalance = [
+            'balance' => $this->user->getBalance()
+        ];
+        if ($this->user::updateData($newBalance, 'acc_number', $request_content->acc_number)) {
+            Helper::apiResponse(
+                'Saldo atualizado com sucesso'
+            );
+        } else {
+            http_response_code(404);
+            Helper::apiResponse(
+                'Conta informada não encontrada/Saldo inserido igual ao atual'
+            );
+        }
     }
 }
