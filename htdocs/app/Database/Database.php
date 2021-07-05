@@ -140,9 +140,9 @@ class Database extends PDO implements DatabaseInterface
      * @param string $order
      * @param string $limit
      * @param string $fields
-     * @return bool
+     * @return PDOStatement
      */
-    public function select(string $where = '', string $order = '', string $limit = '', string $fields = '*') : bool
+    public function select(string $where = '', string $order = '', string $limit = '', string $fields = '*') : PDOStatement
     {
         // Checking if these informations have been specified
         $where = ($where!=='') ? 'WHERE ' . $where : '';
@@ -151,7 +151,8 @@ class Database extends PDO implements DatabaseInterface
         // Building and executing the query
         $query = 'SELECT ' . $fields . ' FROM ' . self::$table . ' ' . $where . ' ' . $order . ' ' . $limit;
         $stmt = $this->prepare($query);
-        return $this->executeStatement($stmt);
+        $this->executeStatement($stmt);
+        return $stmt;
     }
 
     /**

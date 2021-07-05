@@ -14,7 +14,7 @@ class CoreModel extends ModelManager implements CoreModelInterface
     private static array $columns;
 
     /**
-     * Class Construct
+     * Sets main attributes
      *
      * @param string $table
      * @param array $columns
@@ -23,6 +23,16 @@ class CoreModel extends ModelManager implements CoreModelInterface
     {
         self::$table = $table;
         self::$columns = $columns;
+    }
+
+    /**
+     * Returns the attributes
+     *
+     * @return array
+     */
+    public static function getAttributes() : array
+    {
+        return [self::$table, self::$columns];
     }
 
     /**
@@ -69,6 +79,7 @@ class CoreModel extends ModelManager implements CoreModelInterface
      */
     public static function insertData(array $data) : int
     {
+        Builder::buildContainer()->get('ModelManager');
         self::$conn->setTable(self::$table);
         return self::$conn->insert($data, self::$columns);
     }

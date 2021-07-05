@@ -2,6 +2,7 @@
 
 namespace App\DependencyInjection;
 
+use App\Controllers\API\UserApiController;
 use App\Models\UserAddressModel;
 use App\Models\UserModel;
 use App\Models\UserTransactionsModel;
@@ -35,6 +36,9 @@ class Builder
             'Database' => factory(function () {
                 return new Database();
             }),
+            'UserApiController' => factory(function () {
+                return new UserApiController();
+            })
         ]);
 
         return self::$builder->build();

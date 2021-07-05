@@ -6,6 +6,12 @@ use App\Interfaces\UserTransactionModelInterface;
 
 class UserTransactionsModel extends CoreModel implements UserTransactionModelInterface
 {
+    public const TRANS_INSUFFICIENT_BAL = 'Saldo insuficiente.';
+    public const TRANS_WITHDRAW_OK = 'Saque realizada com sucesso.';
+    public const TRANS_WITHDRAW_INV_AMT = 'Valor à ser sacado inválido.';
+    public const TRANS_DEPOSIT_OK = 'Depósito realizada com sucesso.';
+    public const TRANS_DEPOSIT_INV_AMT = 'Valor à ser depositado inválido.';
+
     private int $transactionId;
     private float $balance;
     private float $amount;
@@ -17,7 +23,7 @@ class UserTransactionsModel extends CoreModel implements UserTransactionModelInt
 
     public function __construct()
     {
-        parent::__construct('user_transactions',
+        self::setAttributes('user_transactions',
         [
             "id_transaction",
             "balance",

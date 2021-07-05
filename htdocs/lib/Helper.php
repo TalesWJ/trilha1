@@ -117,4 +117,77 @@ class Helper
         }
         self::response()->json($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
+
+    /**
+     * Gets data from an API endpoint
+     *
+     * @param string $endpoint
+     * @param array $data
+     * @param bool $returnTransfer
+     * @return mixed
+     */
+    public static function apiRequest(string $endpoint, array $data, bool $returnTransfer = true)
+    {
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/API' . $endpoint;
+
+        try {
+            $ch = curl_init();
+
+            if ($ch === false) {
+                throw new Exception('Failed to initialize cUrl.');
+            }
+
+            $curlData = json_encode($data);
+
+            if(self::userAuthenticated()) {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-type : application/json',
+                    'Authorization: Bearer ' . $_SESSION['token']
+                ]);
+            } else {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-type : application/json'
+                ]);
+            }
+
+            $verbose = fopen('php://temp', 'w+');
+            curl_setopt($ch, CURLOPT_STDERR, $verbose);
+
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $curlData);
+            curl_setopt($ch, CURLOPT_PROXY, '172.17.0.17:80');
+            $requestData = curl_exec($ch);
+
+            if ($requestData === false) {
+                throw new Exception(curl_error($ch), curl_errno($ch));
+            }
+
+            curl_close($ch);
+
+            if ($returnTransfer) {
+                return json_decode($requestData);
+            }
+        } catch (Exception $e) {
+            trigger_error(sprintf(
+                "Curl failed with error #%d: %s",
+                $e->getCode(), $e->getMessage()),
+                E_USER_ERROR);
+        }
+    }
+
+    /**
+     * Checks if the user is authenticated
+     *
+     * @return bool
+     */
+    public static function userAuthenticated() : bool
+    {
+        if (!isset($_SESSION['acc_number'] , $_SESSION['token'])) {
+            return false;
+        }
+        return true;
+    }
 }

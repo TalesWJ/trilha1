@@ -10,7 +10,6 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use \Helper;
-use PHPUnit\TextUI\Help;
 
 
 class UserApiController
