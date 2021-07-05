@@ -58,6 +58,8 @@ class UserApiController
     }
 
     /**
+     * Returns user info based on its acc_number
+     *
      * @param string $accNumber
      * @throws DependencyException
      * @throws NotFoundException
@@ -102,12 +104,15 @@ class UserApiController
     }
 
     /**
-     * Creates user based on post params
+     * Creates user based on post params {
+     * [user -> name, cpf, rg, dob, phone, password]
+     * [address -> zipcode, country, state, city, street, number, complement]
      */
     public function createUser() : void
     {
         $request_content = json_decode(file_get_contents('php://input'));
         $allUsers = $this->user::selectAllData();
+        $attr = $this->user::getAttributes();
 
         try {
             // Checking length of inserted data, max: 255 characters
@@ -164,6 +169,7 @@ class UserApiController
             ];
 
             $this->address = Helper::getContainer('UserAddressModel');
+            $attr2 = $this->address::getAttributes();
             $this->address->setZipCode($request_content->address->zipcode);
             $this->address->setCountry($request_content->address->country);
             $this->address->setState($request_content->address->state);
@@ -184,7 +190,9 @@ class UserApiController
                 'acc_number' => $this->address->getAccNumber()
             ];
 
+            $this->user::setAttributes($attr[0], $attr[1]);
             $this->user::insertData($userData);
+            $this->user::setAttributes($attr2[0], $attr2[1]);
             $this->address::insertData($addressData);
             http_response_code(201);
             $message = $this->user::USER_CREATED;

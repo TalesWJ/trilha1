@@ -10,15 +10,25 @@ use \Exception;
 
 class UserTransactionApiController
 {
+    /**
+     * @var UserTransactionsModel|mixed
+     */
     private UserTransactionsModel $transaction;
 
+    /**
+     * UserTransactionApiController constructor.
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
     public function __construct()
     {
         $this->transaction = Helper::getContainer('UserTransactionsModel');
     }
 
-
-    public function withdraw()
+    /**
+     * Withdraw transaction {acc_number and amount} needed on the body.
+     */
+    public function withdraw() : void
     {
         $request_content = json_decode(file_get_contents('php://input'));
 
@@ -27,7 +37,11 @@ class UserTransactionApiController
             'amount' => $request_content->amount
         ];
         try {
-            $balance = (Helper::apiRequest('/users/getBalance', ['acc_number' => $withdrawData['acc_number']]))->balance;
+            $balance = (Helper::apiRequest(
+                '/users/getBalance',
+                ['acc_number' => $withdrawData['acc_number']],
+                true
+            ))->balance;
             $newBalance = $balance - $withdrawData['amount'];
 
             if ($withdrawData['amount'] < 0) {
@@ -38,24 +52,15 @@ class UserTransactionApiController
                 throw new Exception($this->transaction::TRANS_INSUFFICIENT_BAL);
             }
 
-            $this->transaction->setBalance($newBalance);
-            $this->transaction->setAmount((float)$withdrawData['amount']);
-            $this->transaction->setType('withdraw');
-            $this->transaction->setCreatedAt(date('Y-m-d H:i:s'));
-            $this->transaction->setFromAcc($withdrawData['acc_number']);
-            $this->transaction->setToAcc($withdrawData['acc_number']);
-            $this->transaction->setAccNumber($withdrawData['acc_number']);
+            $this->setTransInfo(
+                $newBalance,
+                $withdrawData['amount'],
+                'withdraw',
+                $withdrawData['acc_number'],
+                $withdrawData['acc_number']
+            );
 
-
-            $transData = [
-                'balance' => $this->transaction->getBalance(),
-                'amount' => $this->transaction->getAmount(),
-                'type' => $this->transaction->getType(),
-                'created_at' => $this->transaction->getCreatedAt(),
-                'from_acc' => $this->transaction->getFromAcc(),
-                'to_acc' => $this->transaction->getToAcc(),
-                'acc_number' => $this->transaction->getAccNumber()
-            ];
+            $transData = $this->getTransInfo();
 
             $this->transaction::insertData($transData);
 
@@ -80,7 +85,10 @@ class UserTransactionApiController
         }
     }
 
-    public function deposit()
+    /**
+     * Deposit transaction {acc_number and amount} needed on the body.
+     */
+    public function deposit() : void
     {
         $request_content = json_decode(file_get_contents('php://input'));
 
@@ -89,30 +97,26 @@ class UserTransactionApiController
             'amount' => $request_content->amount
         ];
         try {
-            $balance = (Helper::apiRequest('/users/getBalance', ['acc_number' => $depositData['acc_number']]))->balance;
+            $balance = (Helper::apiRequest(
+                '/users/getBalance',
+                ['acc_number' => $depositData['acc_number']],
+                true
+            ))->balance;
             $newBalance = $balance + $depositData['amount'];
 
             if ($depositData['amount'] < 0) {
                 throw new Exception($this->transaction::TRANS_DEPOSIT_INV_AMT);
             }
 
-            $this->transaction->setBalance($newBalance);
-            $this->transaction->setAmount((float)$depositData['amount']);
-            $this->transaction->setType('deposit');
-            $this->transaction->setCreatedAt(date('Y-m-d H:i:s'));
-            $this->transaction->setFromAcc($depositData['acc_number']);
-            $this->transaction->setToAcc($depositData['acc_number']);
-            $this->transaction->setAccNumber($depositData['acc_number']);
+            $this->setTransInfo(
+                $newBalance,
+                $depositData['amount'],
+                'deposit',
+                $depositData['acc_number'],
+                $depositData['acc_number']
+            );
 
-            $transData = [
-                'balance' => $this->transaction->getBalance(),
-                'amount' => $this->transaction->getAmount(),
-                'type' => $this->transaction->getType(),
-                'created_at' => $this->transaction->getCreatedAt(),
-                'from_acc' => $this->transaction->getFromAcc(),
-                'to_acc' => $this->transaction->getToAcc(),
-                'acc_number' => $this->transaction->getAccNumber()
-            ];
+            $transData = $this->getTransInfo();
 
             $this->transaction::insertData($transData);
 
@@ -135,5 +139,133 @@ class UserTransactionApiController
                 $message
             );
         }
+    }
+
+    /**
+     * Transfer transaction {acc_number, to_acc, amount} needed on the body
+     */
+    public function transfer() : void
+    {
+        $request_content = json_decode(file_get_contents('php://input'));
+        $transferenceData = [
+            'acc_number' => $request_content->acc_number,
+            'to_acc' => $request_content->to_acc,
+            'amount' => $request_content->amount
+        ];
+
+        try {
+            if ($transferenceData['amount'] < 0) {
+                throw new Exception($this->transaction::TRANS_TRANSF_INV_AMT);
+            }
+
+            if ($transferenceData['acc_number'] === $transferenceData['to_acc']) {
+                throw new Exception($this->transaction::TRANS_TRANSF_INV);
+            }
+
+            $balanceFrom = (Helper::apiRequest(
+                '/users/getBalance',
+                ['acc_number' => $transferenceData['acc_number']],
+                true
+            ))->balance;
+
+            $balanceTo = (Helper::apiRequest(
+                '/users/getBalance',
+                ['acc_number' => $transferenceData['to_acc']],
+                true
+            ))->balance;
+
+            $newBalanceFrom = $balanceFrom - $transferenceData['amount'];
+
+            if ($newBalanceFrom < 0) {
+                throw new Exception($this->transaction::TRANS_INSUFFICIENT_BAL);
+            }
+
+            $newBalanceTo = $balanceTo + $transferenceData['amount'];
+
+            $this->setTransInfo(
+                $newBalanceFrom,
+                $transferenceData['amount'],
+                'transference',
+                $transferenceData['acc_number'],
+                $transferenceData['to_acc']
+            );
+
+            $transData = $this->getTransInfo();
+
+            $this->transaction::insertData($transData);
+
+            Helper::apiRequest('/users/updateBalance', [
+                'acc_number' => $transferenceData['acc_number'],
+                'balance' => $newBalanceFrom
+            ], false);
+
+            $this->transaction::insertData($transData);
+
+            Helper::apiRequest('/users/updateBalance', [
+                'acc_number' => $transferenceData['to_acc'],
+                'balance' => $newBalanceTo
+            ], false);
+
+            $message = $this->transaction::TRANS_TRANSF_OK;
+            $responseData = [
+                'sender_acc' => [
+                    'acc_number' => $transferenceData['acc_number'],
+                    'new_balance' => $newBalanceFrom
+                ],
+                'recipient_acc' => [
+                    'acc_number' => $transferenceData['to_acc'],
+                    'new_balance' => $newBalanceTo
+                ]
+            ];
+
+            Helper::apiResponse(
+                $message,
+                'transaction_data',
+                $responseData
+            );
+        } catch (Exception $e) {
+            http_response_code(400);
+            Helper::apiResponse(
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Sets transference data
+     *
+     * @param $balance
+     * @param $amount
+     * @param $type
+     * @param $fromAcc
+     * @param $toAcc
+     */
+    public function setTransInfo($balance, $amount, $type, $fromAcc, $toAcc) : void
+    {
+        $this->transaction->setBalance($balance);
+        $this->transaction->setAmount((float)$amount);
+        $this->transaction->setType($type);
+        $this->transaction->setCreatedAt(date('Y-m-d H:i:s'));
+        $this->transaction->setFromAcc($fromAcc);
+        $this->transaction->setToAcc($toAcc);
+        $this->transaction->setAccNumber($fromAcc);
+    }
+
+    /**
+     * Returns Transference information
+     *
+     * @return array
+     */
+    public function getTransInfo() : array
+    {
+        return [
+            'balance' => $this->transaction->getBalance(),
+            'amount' => $this->transaction->getAmount(),
+            'type' => $this->transaction->getType(),
+            'created_at' => $this->transaction->getCreatedAt(),
+            'from_acc' => $this->transaction->getFromAcc(),
+            'to_acc' => $this->transaction->getToAcc(),
+            'acc_number' => $this->transaction->getAccNumber()
+        ];
     }
 }

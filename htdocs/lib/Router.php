@@ -16,6 +16,7 @@ Router::group(['namespace' => 'App\Controllers\API'], function() {
           Router::group(['prefix' => '/transactions'], function() {
               Router::post('/withdraw', [UserTransactionApiController::class, 'withdraw']);
               Router::post('/deposit', [UserTransactionApiController::class, 'deposit']);
+              Router::post('/transfer', [UserTransactionApiController::class, 'transfer']);
           });
        });
    });
