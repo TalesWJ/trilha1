@@ -197,7 +197,7 @@ class Helper
      * @param string $data
      * @return string|bool
      */
-    public static function encryptData(string $data) : string|bool
+    public static function encryptData(string $data) : string
     {
         $cipher = "AES-256-CBC";
         $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
@@ -215,7 +215,7 @@ class Helper
      * @param string $data
      * @return string|bool
      */
-    public static function decryptData(string $data) : string|bool
+    public static function decryptData(string $data) : string
     {
         $cipher = "AES-256-CBC";
         $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
