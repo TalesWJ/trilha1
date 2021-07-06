@@ -147,11 +147,11 @@ class UserApiController
 
             $pw = password_hash($request_content->user->password, PASSWORD_ARGON2I);
 
-            $this->user->setName($request_content->user->name);
-            $this->user->setCpf($request_content->user->cpf);
-            $this->user->setRg($request_content->user->rg);
-            $this->user->setDob($request_content->user->dob);
-            $this->user->setPhone($request_content->user->phone);
+            $this->user->setName(Helper::encryptData($request_content->user->name));
+            $this->user->setCpf(Helper::encryptData($request_content->user->cpf));
+            $this->user->setRg(Helper::encryptData($request_content->user->rg));
+            $this->user->setDob(Helper::encryptData($request_content->user->dob));
+            $this->user->setPhone(Helper::encryptData($request_content->user->phone));
             $this->user->setBalance(0.0);
             $this->user->setAccNumber($accNumber);
             $this->user->setAccPw($pw);
@@ -170,13 +170,13 @@ class UserApiController
 
             $this->address = Helper::getContainer('UserAddressModel');
             $attr2 = $this->address::getAttributes();
-            $this->address->setZipCode($request_content->address->zipcode);
-            $this->address->setCountry($request_content->address->country);
-            $this->address->setState($request_content->address->state);
-            $this->address->setCity($request_content->address->city);
-            $this->address->setStreet($request_content->address->street);
-            $this->address->setNumber($request_content->address->number);
-            $this->address->setComplement($request_content->address->complement);
+            $this->address->setZipCode(Helper::encryptData($request_content->address->zipcode));
+            $this->address->setCountry(Helper::encryptData($request_content->address->country));
+            $this->address->setState(Helper::encryptData($request_content->address->state));
+            $this->address->setCity(Helper::encryptData($request_content->address->city));
+            $this->address->setStreet(Helper::encryptData($request_content->address->street));
+            $this->address->setNumber(Helper::encryptData($request_content->address->number));
+            $this->address->setComplement(Helper::encryptData($request_content->address->complement));
             $this->address->setAccNumber($accNumber);
 
             $addressData = [
@@ -225,10 +225,10 @@ class UserApiController
                 case $user->acc_number:
                     return $this->user::USER_ACCNUMBER_EXISTS;
                     break;
-                case $user->cpf:
+                case Helper::decryptData($user->cpf):
                     return $this->user::USER_CPF_EXISTS;
                     break;
-                case $user->rg:
+                case Helper::decryptData($user->rg):
                     return $this->user::USER_RG_EXISTS;
                     break;
                 default:

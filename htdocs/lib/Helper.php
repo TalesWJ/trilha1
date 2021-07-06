@@ -190,4 +190,40 @@ class Helper
         }
         return true;
     }
+
+    /**
+     * Encrypts data
+     *
+     * @param string $data
+     * @return string|bool
+     */
+    public static function encryptData(string $data) : string|bool
+    {
+        $cipher = "AES-256-CBC";
+        $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
+        if (in_array($cipher, openssl_get_cipher_methods())) {
+            $ivlen = openssl_cipher_iv_length($cipher);
+            $iv = openssl_random_pseudo_bytes($ivlen);
+            return base64_encode(openssl_encrypt($data, $cipher, $key, 0, $iv));
+        }
+        return false;
+    }
+
+    /**
+     * Decrypts data
+     *
+     * @param string $data
+     * @return string|bool
+     */
+    public static function decryptData(string $data) : string|bool
+    {
+        $cipher = "AES-256-CBC";
+        $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
+        if (in_array($cipher, openssl_get_cipher_methods())) {
+            $ivlen = openssl_cipher_iv_length($cipher);
+            $iv = openssl_random_pseudo_bytes($ivlen);
+            return openssl_decrypt(base64_decode($data), $cipher, $key, 0, $iv);
+        }
+        return false;
+    }
 }
