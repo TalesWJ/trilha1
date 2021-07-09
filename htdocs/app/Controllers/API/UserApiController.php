@@ -264,16 +264,15 @@ class UserApiController
                 case $this->user::USER_PW_AUTH_OK:
                     $message = $pwAuth;
                     $this->user->setToken(base64_encode(random_bytes(16)));
+                    $data = [
+                        'token' => $this->user->getToken()
+                    ];
                     break;
             }
         } else {
             http_response_code(404);
             $message = $this->user::USER_NOT_FOUND;
         }
-
-        $data = [
-            'token' => $this->user->getToken()
-        ];
 
         if (isset($data['token'])) {
             $this->user::updateData($data, 'acc_number', $loginData['acc_number']);

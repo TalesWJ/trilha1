@@ -150,9 +150,6 @@ class Helper
                 ]);
             }
 
-            $verbose = fopen('php://temp', 'w+');
-            curl_setopt($ch, CURLOPT_STDERR, $verbose);
-
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_VERBOSE, true);
