@@ -13,14 +13,19 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                @yield('navbar')
+                @yield('navbaritems')
             </ul>
+            @yield('saldo')
         </nav>
         <img src="../../public/Misc/Images/logo-webjump-footer.png" alt="" class="logowj" width="200px">
     </div>
     @yield('alert')
     @yield('header')
 </header>
+
+<section class="sectionDash">
+    @yield('main')
+</section>
 
 
 @section('footer')

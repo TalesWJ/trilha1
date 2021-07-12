@@ -33,10 +33,10 @@ class UserController
      */
     public function renderHome(?array $params = null)
     {
-        if(!empty($params)) {
-            echo $this->view->render('pages/login', $params);
-        } elseif (Helper::userAuthenticated()) {
+        if(Helper::userAuthenticated()) {
             echo $this->view->render('pages/dashboard', ['balance' => Helper::userBalance()]);
+        } elseif (!empty($params)) {
+            echo $this->view->render('pages/login', $params);
         } else {
             echo $this->view->render('pages/login');
         }

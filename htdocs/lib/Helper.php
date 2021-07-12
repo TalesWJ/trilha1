@@ -236,7 +236,7 @@ class Helper
     {
         if(self::userAuthenticated()) {
             $user = self::getContainer('UserModel');
-            $userAccount = $user->selectDataByColumn('acc_number', $_SESSION('acc_number'));
+            $userAccount = $user->selectDataByColumn('acc_number', $_SESSION['acc_number']);
             return $userAccount[0]->balance;
         }
         return null;

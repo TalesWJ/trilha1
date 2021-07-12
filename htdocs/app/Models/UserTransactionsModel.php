@@ -7,9 +7,9 @@ use App\Interfaces\UserTransactionModelInterface;
 class UserTransactionsModel extends CoreModel implements UserTransactionModelInterface
 {
     public const TRANS_INSUFFICIENT_BAL = 'Saldo insuficiente.';
-    public const TRANS_WITHDRAW_OK = 'Saque realizada com sucesso.';
+    public const TRANS_WITHDRAW_OK = 'Saque realizado com sucesso.';
     public const TRANS_WITHDRAW_INV_AMT = 'Valor à ser sacado inválido.';
-    public const TRANS_DEPOSIT_OK = 'Depósito realizada com sucesso.';
+    public const TRANS_DEPOSIT_OK = 'Depósito realizado com sucesso.';
     public const TRANS_DEPOSIT_INV_AMT = 'Valor à ser depositado inválido.';
     public const TRANS_TRANSF_INV_AMT = 'Valor à ser transferido inválido.';
     public const TRANS_TRANSF_INV = 'Não é possível realizar transferência entre a mesma conta';

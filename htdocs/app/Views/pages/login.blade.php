@@ -4,7 +4,7 @@
     <title>Login</title>
 @endsection
 
-@section('navbar')
+@section('navbaritems')
     <!-- Button to open the modal login form -->
     <li><a onclick="document.getElementById('id01').style.display='block'" class="aHome">Cadastre-se</a></li>
 @endsection
@@ -32,7 +32,7 @@
             </div>
 
             <div class="containerLogin">
-                <section>
+                <section class="sectionlogin">
                     <center><h2 class="form-title">Informações de Cadastro</h2></center>
                 </section>
                 <br>
@@ -66,9 +66,9 @@
                        minlength="5" required>
                 <br>
 
-                <section>
+                <section class="sectionlogin">
                     <center><h2 class="form-title">Informações de Endereço</h2></center>
-                </section>
+                </section class="sectionlogin">
                 <br>
 
                 <label for="CEP" class="labelLogin"><b>CEP*</b></label><br>
@@ -113,9 +113,9 @@
         </div>
 
         <div class="containerLogin">
-            <section>
+            <section class="sectionlogin">
                 <center><h2 class="form-title">Informações de usuário</h2></center>
-            </section>
+            </section class="sectionlogin">
             <br>
             <label for="acc_number" class="labelLogin"><b>Conta</b></label>
             <br>
