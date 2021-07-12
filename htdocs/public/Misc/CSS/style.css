@@ -49,6 +49,7 @@ nav ul li a{
     text-decoration: none;
     color: #F1F1F1;
     font-size: 25px;
+    cursor: pointer;
 }
 
 .content h1{
@@ -70,7 +71,7 @@ nav ul li a{
 }
 
 .feature-img{
-    height: 350px;
+    height: 250px;
 }
 
 .labelLogin{
@@ -116,8 +117,8 @@ nav ul li a{
     width: 30%; /* Could be more or less, depending on screen size */
     border-radius: 8px;
     position: absolute;
-    right: 200px;
-    top: 200px;
+    right: 250px;
+    top: 180px;
 }
 
 /* The Close Button */
@@ -225,5 +226,26 @@ span.psw {
     width: 97%;
     margin: 5px;
     padding: 5px;
+}
+
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+}
+
+.btnAlert {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btnAlert:hover {
+    color: black;
 }
 

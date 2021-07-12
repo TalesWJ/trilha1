@@ -9,10 +9,18 @@
     <li><a onclick="document.getElementById('id01').style.display='block'" class="aHome">Cadastre-se</a></li>
 @endsection
 
+@if (isset($message))
+@section('alert')
+    <div class="alert">
+        <span class="btnAlert" onclick="this.parentElement.style.display='none';">&times;</span>
+        {{ $message }} @if (isset($acc_number)) Número da conta: {{ $acc_number }} @endif
+    </div>
+@endsection
+@endif
+
 @section('header')
 
     <!-- The Modal -->
-
     <div id="id01" class="modal">
       <span onclick="document.getElementById('id01').style.display='none'"
             class="close" title="Close Modal">&times;</span>
@@ -42,11 +50,11 @@
                 <label for="rg" class="labelLogin"><b>Registro Geral*</b></label>
                 <br>
                 <input type="text" placeholder="Ex.: 00.000.000" name="rg" id="rg"
-                       minlength="11" maxlength="11" required><br>
+                       minlength="10" maxlength="10" required><br>
 
                 <label for="dob" class="labelLogin"><b>Data de Nascimento*</b></label>
                 <br>
-                <input type="date" name="dob" id="dob" class="dob" min="2003-01-01" required><br>
+                <input type="date" name="dob" id="dob" class="dob" required><br>
 
                 <label for="phone" class="labelLogin"><b>Telefone*</b></label>
                 <br>

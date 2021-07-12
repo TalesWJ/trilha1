@@ -17,12 +17,12 @@ Router::group(['namespace' => 'App\Controllers\API'], function() {
                   Router::post('/withdraw', [UserTransactionApiController::class, 'withdraw']);
                   Router::post('/deposit', [UserTransactionApiController::class, 'deposit']);
                   Router::post('/transfer', [UserTransactionApiController::class, 'transfer']);
+            });
           });
-          // Auth not needed
-          Router::post('/create', [UserApiController::class, 'createUser']);
-          Router::post('/getBalance', [UserApiController::class, 'getBalance']);
-          Router::post('/updateBalance', [UserApiController::class, 'updateBalance']);
-          });
+           // Auth not needed
+           Router::post('/create', [UserApiController::class, 'createUser']);
+           Router::post('/getBalance', [UserApiController::class, 'getBalance']);
+           Router::post('/updateBalance', [UserApiController::class, 'updateBalance']);
        });
    });
 });

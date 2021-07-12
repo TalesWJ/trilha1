@@ -196,11 +196,11 @@ class Helper
      */
     public static function encryptData(string $data) : string
     {
-        $cipher = "AES-256-CBC";
+        $cipher = "aes-256-cbc";
         $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
         if (in_array($cipher, openssl_get_cipher_methods())) {
             $ivlen = openssl_cipher_iv_length($cipher);
-            $iv = openssl_random_pseudo_bytes($ivlen);
+            $iv = substr("detectorautorhisericeexercisesuitcase", 0, $ivlen);
             return base64_encode(openssl_encrypt($data, $cipher, $key, 0, $iv));
         }
         return false;
@@ -214,13 +214,31 @@ class Helper
      */
     public static function decryptData(string $data) : string
     {
-        $cipher = "AES-256-CBC";
+        $cipher = "aes-256-cbc";
         $key = "JBj5RNQ2kcjnp1hrCFCqAQDtmlTr18pE";
         if (in_array($cipher, openssl_get_cipher_methods())) {
             $ivlen = openssl_cipher_iv_length($cipher);
-            $iv = openssl_random_pseudo_bytes($ivlen);
+            $iv = substr("detectorautorhisericeexercisesuitcase", 0, $ivlen);
+            $decrypted = openssl_decrypt(base64_decode($data), $cipher, $key, 0, $iv);
             return openssl_decrypt(base64_decode($data), $cipher, $key, 0, $iv);
         }
         return false;
+    }
+
+    /**
+     * Returns authenticated user's balance.
+     *
+     * @return float|null
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
+    public static function userBalance() : ?float
+    {
+        if(self::userAuthenticated()) {
+            $user = self::getContainer('UserModel');
+            $userAccount = $user->selectDataByColumn('acc_number', $_SESSION('acc_number'));
+            return $userAccount[0]->balance;
+        }
+        return null;
     }
 }
