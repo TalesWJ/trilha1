@@ -19,10 +19,8 @@ body{
 }
 
 .logowj{
-    margin-top: 5px;
     margin-right: 10px;
     width: 160px;
-    cursor: pointer;
 }
 
 .navbar{
@@ -55,6 +53,7 @@ nav ul li a{
 .saldo{
     color: #F1F1F1;
     font-size: 25px;
+    padding: 20px;
 }
 
 .content h1{
@@ -286,7 +285,7 @@ span.psw {
     font-size: 40px;
     cursor: pointer;
     background-color: #172D75;
-    padding: 10px;
+    padding: 10px 90px;
     border-radius: 6px;
 }
 
@@ -338,5 +337,10 @@ span.psw {
 
 .extracth1{
     font-size: 50px;
+}
+
+.intbox{
+    width: 100%;
+    height: 50%;
 }
 

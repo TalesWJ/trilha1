@@ -15,8 +15,8 @@
                 <li><a href="/">Home</a></li>
                 @yield('navbaritems')
             </ul>
-            @yield('saldo')
         </nav>
+        @yield('saldo')
         <img src="../../public/Misc/Images/logo-webjump-footer.png" alt="" class="logowj" width="200px">
     </div>
     @yield('alert')

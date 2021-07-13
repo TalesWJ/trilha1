@@ -30,17 +30,22 @@
 @section('main')
     <div class="divDash">
         <ul>
-            <div>
+            <div class="intbox">
                 <img src="../../../public/Misc/Images/transaction.png" class="transacIcon">
                 <li><a onclick="document.getElementById('id01').style.display='block'">Transferência</a></li><br>
             </div>
-
-            <img src="../../../public/Misc/Images/deposit.png" class="transacIcon">
-            <li><a onclick="document.getElementById('id02').style.display='block'">Depósito</a></li><br>
-            <img src="../../../public/Misc/Images/money-withdrawal.png" class="transacIcon">
-            <li><a onclick="document.getElementById('id03').style.display='block'">Saque</a></li><br>
-            <img src="../../../public/Misc/Images/search.png" class="transacIcon">
-            <li><a href="/extractGet">Extrato</a></li>
+            <div class="intbox">
+                <img src="../../../public/Misc/Images/deposit.png" class="transacIcon">
+                <li><a onclick="document.getElementById('id02').style.display='block'">Depósito</a></li><br>
+            </div>
+            <div class="intbox">
+                <img src="../../../public/Misc/Images/money-withdrawal.png" class="transacIcon">
+                <li><a onclick="document.getElementById('id03').style.display='block'">Saque</a></li><br>
+            </div>
+            <div class="intbox">
+                <img src="../../../public/Misc/Images/search.png" class="transacIcon">
+                <li><a href="/extractGet">Extrato</a></li>
+            </div>
         </ul>
     </div>
 
