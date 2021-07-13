@@ -1,7 +1,7 @@
 @extends('general_layout')
 
 @section('head')
-    <title>Login</title>
+    <title>Dashboard</title>
 @endsection
 
 @section('navbaritems')
@@ -40,7 +40,7 @@
             <img src="../../../public/Misc/Images/money-withdrawal.png" class="transacIcon">
             <li><a onclick="document.getElementById('id03').style.display='block'">Saque</a></li><br>
             <img src="../../../public/Misc/Images/search.png" class="transacIcon">
-            <li><a onclick="document.getElementById('id04').style.display='block'">Extrato</a></li>
+            <li><a href="/extractGet">Extrato</a></li>
         </ul>
     </div>
 
@@ -132,41 +132,6 @@
 
             <div class="containerLogin">
                 <button type="button" onclick="document.getElementById('id03').style.display='none'" class="cancelbtn">Cancel</button>
-            </div>
-        </form>
-    </div>
-
-    <div id="id04" class="modal">
-      <span onclick="document.getElementById('id04').style.display='none'"
-            class="close" title="Close Modal">&times;</span>
-
-        <!-- Modal Content -->
-        <form class="modal-content animate" action="extractPost" method="post">
-            <div class="imgcontainer">
-                <img src="../../../public/Misc/Images/img_avatar2.jpg" alt="Avatar" class="avatar">
-            </div>
-
-            <div class="containerLogin">
-                <section class="sectionlogin">
-                    <center><h2 class="form-title">Extrato</h2></center>
-                </section>
-                <br>
-
-                <label for="name" class="labelLogin"><b>Nome*</b></label>
-                <br>
-                <input type="text" placeholder="Nome Completo" name="name" id="name" required>
-                <br>
-
-                <label for="cpf" class="labelLogin"><b>CPF*</b></label>
-                <br>
-                <input type="text" placeholder="Ex.: 000.000.000-00" name="cpf" id="cpf"
-                       minlength="14" maxlength="14" required> <br>
-
-                <button type="submit" class="loginbtn">Confirmar</button>
-            </div>
-
-            <div class="containerLogin">
-                <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancelbtn">Cancel</button>
             </div>
         </form>
     </div>

@@ -15,5 +15,6 @@ Router::group(['namespace' => 'App\Controllers\Frontend'], function() {
        Router::post('/transferPost', [UserTransactionController::class, 'transfer']);
        Router::post('/depositPost', [UserTransactionController::class, 'deposit']);
        Router::post('/withdrawPost', [UserTransactionController::class, 'withdraw']);
+       Router::get('/extractGet', [UserTransactionController::class, 'extract']);
    });
 });

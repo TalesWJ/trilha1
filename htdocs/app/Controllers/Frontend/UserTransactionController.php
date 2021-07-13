@@ -133,7 +133,7 @@ class UserTransactionController
         $extract = $this->transaction::selectDataByColumn('acc_number', $_SESSION['acc_number']);
         $balance = Helper::userBalance();
         if (!empty($extract)) {
-            $this->view->render(
+            echo $this->view->render(
                 'pages/extract', [
                     'extract' => $extract,
                     'balance' => $balance
