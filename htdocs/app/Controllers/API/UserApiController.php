@@ -9,7 +9,7 @@ use App\Models\UserAddressModel;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
-use \Helper;
+use Helper;
 
 
 class UserApiController
@@ -297,8 +297,8 @@ class UserApiController
         $user = $this->user::selectDataByColumn('acc_number', $request_content->acc_number);
 
         if (isset($user[0])) {
-            $balance = $user[0]->balance;
-            $message = 'Balanço obtido com sucesso';
+            $balance = number_format((float)$user[0]->balance, 2, '.', '');
+            $message = 'Saldo obtido com sucesso';
             Helper::apiResponse(
                 $message,
                 'balance',
@@ -319,7 +319,11 @@ class UserApiController
     public function updateBalance()
     {
         $request_content = json_decode(file_get_contents('php://input'));
-        $this->user->setBalance($request_content->balance);
+        $this->user->setBalance((float)number_format(
+            (float)$request_content->balance,
+            2,
+            '.',
+            ''));
         $newBalance = [
             'balance' => $this->user->getBalance()
         ];

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controllers\API;
 
-use App\Models\UserModel;
 use App\Models\UserTransactionsModel;
 use Helper;
-use \Exception;
+use Exception;
 
 class UserTransactionApiController
 {
@@ -16,10 +15,6 @@ class UserTransactionApiController
      * @var UserTransactionsModel|mixed
      */
     private UserTransactionsModel $transaction;
-    /**
-     * @var UserModel
-     */
-    private UserModel $user;
 
     /**
      * UserTransactionApiController constructor.
@@ -59,7 +54,7 @@ class UserTransactionApiController
             }
 
             $this->setTransInfo(
-                $newBalance,
+                $this->formatBalance((float)$newBalance),
                 $withdrawData['amount'],
                 'withdraw',
                 $withdrawData['acc_number'],
@@ -72,7 +67,7 @@ class UserTransactionApiController
 
             Helper::apiRequest('/users/updateBalance', [
                 'acc_number' => $withdrawData['acc_number'],
-                'balance' => $newBalance
+                'balance' => $this->formatBalance((float)$newBalance)
             ], false);
 
             $message = $this->transaction::TRANS_WITHDRAW_OK;
@@ -82,7 +77,7 @@ class UserTransactionApiController
                 'transaction_data',
                 $transData
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $message = $e->getMessage();
             http_response_code(400);
             Helper::apiResponse(
@@ -115,7 +110,7 @@ class UserTransactionApiController
             }
 
             $this->setTransInfo(
-                $newBalance,
+                $this->formatBalance((float)$newBalance),
                 $depositData['amount'],
                 'deposit',
                 $depositData['acc_number'],
@@ -126,7 +121,7 @@ class UserTransactionApiController
 
             Helper::apiRequest('/users/updateBalance', [
                 'acc_number' => $depositData['acc_number'],
-                'balance' => $newBalance
+                'balance' => $this->formatBalance((float)$newBalance)
             ], false);
 
             $this->transaction::insertData($transData);
@@ -138,7 +133,7 @@ class UserTransactionApiController
                 'transaction_data',
                 $transData
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $message = $e->getMessage();
             http_response_code(400);
             Helper::apiResponse(
@@ -212,14 +207,14 @@ class UserTransactionApiController
 
             Helper::apiRequest('/users/updateBalance', [
                 'acc_number' => $transferenceData['acc_number'],
-                'balance' => $newBalanceFrom
+                'balance' => $this->formatBalance((float)$newBalanceFrom)
             ], false);
 
             $this->transaction::insertData($transData);
 
             Helper::apiRequest('/users/updateBalance', [
                 'acc_number' => $transferenceData['to_acc'],
-                'balance' => $newBalanceTo
+                'balance' => $this->formatBalance((float)$newBalanceTo)
             ], false);
 
             $message = $this->transaction::TRANS_TRANSF_OK;
@@ -283,5 +278,20 @@ class UserTransactionApiController
             'to_acc' => $this->transaction->getToAcc(),
             'acc_number' => $this->transaction->getAccNumber()
         ];
+    }
+
+    /**
+     * Formats to two decimal points
+     *
+     * @param float $balance
+     * @return float
+     */
+    public function formatBalance(float $balance) : float
+    {
+        return (float)number_format(
+            $balance,
+            2,
+            '.',
+            '');
     }
 }

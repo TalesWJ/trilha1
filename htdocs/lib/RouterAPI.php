@@ -13,6 +13,8 @@ Router::group(['namespace' => 'App\Controllers\API'], function() {
           Router::group(['middleware' => App\Middlewares\AuthMiddlewareAPI::class], function() {
               Router::get('', [UserApiController::class, 'searchUsers']);
               Router::get('/search/{accNumber}', [UserApiController::class, 'searchUserByAccNumber']);
+              Router::post('/getBalance', [UserApiController::class, 'getBalance']);
+              Router::post('/updateBalance', [UserApiController::class, 'updateBalance']);
               Router::group(['prefix' => '/transactions'], function() {
                   Router::post('/withdraw', [UserTransactionApiController::class, 'withdraw']);
                   Router::post('/deposit', [UserTransactionApiController::class, 'deposit']);
@@ -21,8 +23,6 @@ Router::group(['namespace' => 'App\Controllers\API'], function() {
           });
            // Auth not needed
            Router::post('/create', [UserApiController::class, 'createUser']);
-           Router::post('/getBalance', [UserApiController::class, 'getBalance']);
-           Router::post('/updateBalance', [UserApiController::class, 'updateBalance']);
        });
    });
 });

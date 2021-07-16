@@ -1,6 +1,7 @@
 @extends('general_layout')
 
 @section('head')
+    <link rel="stylesheet" href="/public/Misc/CSS/style.css">
     <title>Login</title>
 @endsection
 
