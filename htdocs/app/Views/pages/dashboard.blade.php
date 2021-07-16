@@ -28,25 +28,40 @@
 @endsection
 
 @section('main')
+    <h1>Olá {{$name}}! Bem-vindo à WJCrypto.</h1>
     <div class="divDash">
-        <ul>
             <div class="intbox">
-                <img src="../../../public/Misc/Images/transaction.png" class="transacIcon">
-                <li><a onclick="document.getElementById('id01').style.display='block'">Transferência</a></li><br>
+                <div class="intboximg">
+                    <img src="../../../public/Misc/Images/transaction.png" class="transacIcon">
+                </div>
+                <div class="intboxbtn">
+                    <a class="aBtn" onclick="document.getElementById('id01').style.display='block'">Transferência</a>
+                </div>
             </div>
             <div class="intbox">
-                <img src="../../../public/Misc/Images/deposit.png" class="transacIcon">
-                <li><a onclick="document.getElementById('id02').style.display='block'">Depósito</a></li><br>
+                <div class="intboximg">
+                    <img src="../../../public/Misc/Images/deposit.png" class="transacIcon">
+                </div>
+                <div class="intboxbtn">
+                    <a class="aBtn" onclick="document.getElementById('id02').style.display='block'">Depósito</a>
+                </div>
             </div>
             <div class="intbox">
-                <img src="../../../public/Misc/Images/money-withdrawal.png" class="transacIcon">
-                <li><a onclick="document.getElementById('id03').style.display='block'">Saque</a></li><br>
+                <div class="intboximg">
+                    <img src="../../../public/Misc/Images/money-withdrawal.png" class="transacIcon">
+                </div>
+                <div class="intboxbtn">
+                    <a class="aBtn" onclick="document.getElementById('id03').style.display='block'">Saque</a>
+                </div>
             </div>
             <div class="intbox">
-                <img src="../../../public/Misc/Images/search.png" class="transacIcon">
-                <li><a href="/extractGet">Extrato</a></li>
+                <div class="intboximg">
+                    <img src="../../../public/Misc/Images/search.png" class="transacIcon">
+                </div>
+                <div class="intboxbtn">
+                    <a class="aBtn" href="/extractGet">Extrato</a>
+                </div>
             </div>
-        </ul>
     </div>
 
     <div id="id01" class="modal">
@@ -141,4 +156,15 @@
         </form>
     </div>
 
+    <script>
+        // Get the modal
+        var modal = document.getElementById('id01');
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 @endsection

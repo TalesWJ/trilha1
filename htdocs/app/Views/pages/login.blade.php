@@ -19,6 +19,9 @@
 @endif
 
 @section('header')
+@endsection
+
+@section('main')
 
     <!-- The Modal -->
     <div id="id01" class="modal">
@@ -106,6 +109,7 @@
         <h1>WJCRYPTO</h1>
         <p>A cripto-moeda do futuro!</p>
     </div>
+
 
     <form class="login" action="loginPost" method="post">
         <div class="imgcontainer">

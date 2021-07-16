@@ -306,7 +306,7 @@ class UserApiController
             );
         } else {
             http_response_code(404);
-            $message = 'Usuário não encontrado';
+            $message = $this->user::USER_NOT_FOUND;
             Helper::apiResponse(
                 $message
             );

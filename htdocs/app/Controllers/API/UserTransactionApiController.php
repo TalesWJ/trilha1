@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controllers\API;
 
+use App\Models\UserModel;
 use App\Models\UserTransactionsModel;
 use Helper;
 use \Exception;
 
 class UserTransactionApiController
 {
+    public const USER_NOT_FOUND = 'Usuário não encontrado.';
     /**
      * @var UserTransactionsModel|mixed
      */
     private UserTransactionsModel $transaction;
+    /**
+     * @var UserModel
+     */
+    private UserModel $user;
 
     /**
      * UserTransactionApiController constructor.
@@ -118,12 +124,12 @@ class UserTransactionApiController
 
             $transData = $this->getTransInfo();
 
-            $this->transaction::insertData($transData);
-
             Helper::apiRequest('/users/updateBalance', [
                 'acc_number' => $depositData['acc_number'],
                 'balance' => $newBalance
             ], false);
+
+            $this->transaction::insertData($transData);
 
             $message = $this->transaction::TRANS_DEPOSIT_OK;
 
@@ -166,13 +172,23 @@ class UserTransactionApiController
                 '/users/getBalance',
                 ['acc_number' => $transferenceData['acc_number']],
                 true
-            ))->balance;
+            ));
 
             $balanceTo = (Helper::apiRequest(
                 '/users/getBalance',
                 ['acc_number' => $transferenceData['to_acc']],
                 true
-            ))->balance;
+            ));
+
+            if (
+                $balanceFrom->message == self::USER_NOT_FOUND ||
+                $balanceTo->message == self::USER_NOT_FOUND
+            ) {
+                throw new Exception(self::USER_NOT_FOUND);
+            }
+
+            $balanceTo = $balanceTo->balance;
+            $balanceFrom = $balanceFrom->balance;
 
             $newBalanceFrom = $balanceFrom - $transferenceData['amount'];
 

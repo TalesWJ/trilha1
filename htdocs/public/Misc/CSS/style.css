@@ -70,8 +70,7 @@ nav ul li a{
 }
 
 .content{
-    margin-left: 10%;
-    margin-top: 10%;
+    width: 40%;
 }
 
 .feature-img{
@@ -105,7 +104,7 @@ nav ul li a{
 /* Modal Content/Box */
 .modal-content {
     background-color: white;
-    height: 720px;
+    height: 80%;
     overflow-y: auto;
     margin: 5px auto; /* 15% from the top and centered */
     border: 5px solid #DF5E5E;
@@ -120,9 +119,6 @@ nav ul li a{
     border: 5px solid #DF5E5E;
     width: 30%; /* Could be more or less, depending on screen size */
     border-radius: 8px;
-    position: absolute;
-    right: 250px;
-    top: 180px;
 }
 
 /* The Close Button */
@@ -260,7 +256,7 @@ span.psw {
     align-content: center;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .divDash{
@@ -279,18 +275,16 @@ span.psw {
     margin: 0px 20px;
 }
 
-.divDash ul li a{
+.aBtn{
     text-decoration: none;
-    color: #F1F1F1;
-    font-size: 40px;
+    color: white;
     cursor: pointer;
-    background-color: #172D75;
-    padding: 10px 90px;
-    border-radius: 6px;
+    font-size: 30px;
+    z-index: 5;
 }
 
 .transacIcon{
-    height: 100px;
+    height: 80%;
 }
 
 .styled-table {
@@ -341,6 +335,39 @@ span.psw {
 
 .intbox{
     width: 100%;
-    height: 50%;
+    height: 25%;
+    display: flex;
+    align-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.intboximg{
+    height: 100%;
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+}
+
+.intboxbtn{
+    height: 60%;
+    width: 75%;
+    background-color: #172D75;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.sectionLogin {
+    text-align: center;
+    height: calc(100vh - 70px);
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
 }
 

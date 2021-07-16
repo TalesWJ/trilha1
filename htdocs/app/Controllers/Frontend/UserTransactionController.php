@@ -60,22 +60,26 @@ class UserTransactionController
     public function renderDashboard(?string $message = null,?string $newBalance = null) : void
     {
         $balance = Helper::userBalance();
+        $name = Helper::userName();
         if (!empty($newBalance) && !empty($message)) {
             echo $this->view->render(
                 'pages/dashboard', [
                     'balance' => $newBalance,
-                    'message' => $message
+                    'message' => $message,
+                    'name' => $name
                 ]);
         } elseif (!empty($message) && empty($newBalance)) {
             echo $this->view->render(
                 'pages/dashboard', [
                     'balance' => $balance,
-                    'message' => $message
+                    'message' => $message,
+                    'name' => $name
                 ]);
         } else {
             echo $this->view->render(
                 'pages/dashboard', [
-                    'balance' => $balance
+                    'balance' => $balance,
+                    'name' => $name
                 ]
             );
         }

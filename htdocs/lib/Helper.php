@@ -241,4 +241,14 @@ class Helper
         }
         return null;
     }
+
+    public static function userName() : ?string
+    {
+        if(self::userAuthenticated()) {
+            $user = self::getContainer('UserModel');
+            $userAccount = $user->selectDataByColumn('acc_number', $_SESSION['acc_number']);
+            return self::decryptData($userAccount[0]->name);
+        }
+        return null;
+    }
 }

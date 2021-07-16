@@ -27,7 +27,6 @@
     @yield('main')
 </section>
 
-
 @section('footer')
     <footer>
     </footer>
